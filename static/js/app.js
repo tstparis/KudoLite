@@ -11,7 +11,7 @@ async function loadMessages() {
         const issues = await response.json();
 
         const list = document.getElementById('message-list');
-        //list.innerHTML = ''; // Clear existing messages
+        list.innerHTML = ''; // Clear existing messages
 
         issues.forEach(issue => {
             const li = document.createElement('li');
