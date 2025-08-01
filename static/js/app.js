@@ -1,33 +1,50 @@
-const clientId = 'YOUR_GITHUB_CLIENT_ID';
-const repoOwner = 'YOUR_GITHUB_USERNAME';
-const repoName = 'YOUR_REPO_NAME';
+const backendBaseUrl = 'https://KudoLite.onrender.com'; // Replace with your actual Render URL
 
 document.getElementById('login-btn').addEventListener('click', () => {
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=public_repo`;
-});
-
-document.getElementById('submit-btn').addEventListener('click', async () => {
-    const message = document.getElementById('message-input').value;
-    if (!message) return;
-
-    // Placeholder: You need a backend to handle GitHub OAuth and issue creation
-    alert('Message submitted (simulated): ' + message);
-    document.getElementById('message-input').value = '';
+    window.location.href = `${backendBaseUrl}/login`;
 });
 
 window.onload = async () => {
-    // Placeholder: Fetch messages from GitHub Issues
-    const messages = [
-        { user: 'alice', body: 'Great job!' },
-        { user: 'bob', body: 'Keep it up!' }
-    ];
-    const list = document.getElementById('message-list');
-    messages.forEach(msg => {
-        const li = document.createElement('li');
-        li.textContent = `${msg.user}: ${msg.body}`;
-        list.appendChild(li);
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-    // Simulate login
-    document.getElementById('message-form').style.display = 'block';
+    if (code) {
+        try {
+            const res = await fetch(`${backendBaseUrl}/callback?code=${code}`);
+            const data = await res.json();
+            const token = data.access_token;
+
+            localStorage.setItem('github_token', token);
+            document.getElementById('message-form').style.display = 'block';
+        } catch (err) {
+            alert('Login failed');
+        }
+    }
+
+    // Load messages from GitHub Issues (optional enhancement)
 };
+
+document.getElementById('submit-btn').addEventListener('click', async () => {
+    const message = document.getElementById('message-input').value;
+    const token = localStorage.getItem('github_token');
+
+    if (!message || !token) return;
+
+    try {
+        const res = await fetch(`${backendBaseUrl}/post-message`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, message })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+            alert('Message posted!');
+            document.getElementById('message-input').value = '';
+        } else {
+            alert('Failed to post message');
+        }
+    } catch (err) {
+        alert('Error posting message');
+    }
+});
