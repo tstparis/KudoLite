@@ -15,6 +15,7 @@ window.onload = async () => {
             const token = data.access_token;
 
             localStorage.setItem('github_token', token);
+            console.log('GitHub Token:', token);
             document.getElementById('message-form').style.display = 'block';
         } catch (err) {
             alert('Login failed');
