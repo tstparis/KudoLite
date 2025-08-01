@@ -1,7 +1,7 @@
 
-const backendBaseUrl = 'https://your-render-app.onrender.com'; // Replace with your actual backend URL
-const repoOwner = 'YOUR_GITHUB_USERNAME'; // Replace with your GitHub username
-const repoName = 'YOUR_REPO_NAME'; // Replace with your repo name
+const backendBaseUrl = 'https://kudolite.onrender.com'; // Replace with your actual backend URL
+const repoOwner = 'tstparis'; // Replace with your GitHub username
+const repoName = 'KudoLite'; // Replace with your repo name
 
 document.getElementById('login-btn').addEventListener('click', () => {
     window.location.href = `${backendBaseUrl}/login`;
