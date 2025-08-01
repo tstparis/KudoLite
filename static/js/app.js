@@ -7,7 +7,8 @@ const repoName = 'KudoLite'; // Replace with your GitHub repo name
 // Function to fetch and display messages
 async function loadMessages() {
     try {
-        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`);
+        //const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`);
+        const response = await fetch(`${backendBaseUrl}/get-messages`); //use backend call instead of direct call
         const issues = await response.json();
 
         const list = document.getElementById('message-list');
