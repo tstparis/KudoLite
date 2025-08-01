@@ -6,6 +6,7 @@ const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const REPO_OWNER = process.env.GITHUB_REPO_OWNER;
 const REPO_NAME = process.env.GITHUB_REPO_NAME;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Add this to your .env
 
 router.get('/login', (req, res) => {
   const redirect_uri = 'https://github.com/login/oauth/authorize' +
@@ -53,6 +54,24 @@ router.post('/post-message', async (req, res) => {
     res.json({ success: true, issue_url: issueRes.data.html_url });
   } catch (err) {
     res.status(500).json({ error: 'Failed to create issue' });
+  }
+});
+
+router.get('/get-messages', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
+      {
+        headers: {
+          Authorization: `token ${GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github.v3+json'
+        }
+      }
+    );
+    res.json(response.data);
+  } catch (err) {
+    console.error('Error fetching messages:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
 
