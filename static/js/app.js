@@ -23,6 +23,21 @@ window.onload = async () => {
     }
 
     // Load messages from GitHub Issues (optional enhancement)
+    try {
+        const response = await fetch(`https://api.github.com/repos/tstparis/KudoLite/issues`);
+        const issues = await response.json();
+
+        const list = document.getElementById('message-list');
+        list.innerHTML = ''; // Clear existing messages
+
+        issues.forEach(issue => {
+            const li = document.createElement('li');
+            li.textContent = issue.body;
+            list.appendChild(li);
+        });
+    } catch (err) {
+        console.error('Failed to load messages:', err);
+    }
 };
 
 document.getElementById('submit-btn').addEventListener('click', async () => {
