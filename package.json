@@ -1,7 +1,7 @@
 {
   "name": "github-oauth-backend",
   "version": "1.0.0",
-  "description": "GitHub OAuth backend for Kudoboard Lite",
+  "description": "GitHub OAuth backend for KudoLite",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
