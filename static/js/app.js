@@ -1,30 +1,15 @@
-const backendBaseUrl = 'https://KudoLite.onrender.com'; // Replace with your actual Render URL
+
+const backendBaseUrl = 'https://your-render-app.onrender.com'; // Replace with your actual backend URL
+const repoOwner = 'YOUR_GITHUB_USERNAME'; // Replace with your GitHub username
+const repoName = 'YOUR_REPO_NAME'; // Replace with your repo name
 
 document.getElementById('login-btn').addEventListener('click', () => {
     window.location.href = `${backendBaseUrl}/login`;
 });
 
-window.onload = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
-        try {
-            const res = await fetch(`${backendBaseUrl}/callback?code=${code}`);
-            const data = await res.json();
-            const token = data.access_token;
-
-            localStorage.setItem('github_token', token);
-            console.log('GitHub Token:', token);
-            document.getElementById('message-form').style.display = 'block';
-        } catch (err) {
-            alert('Login failed');
-        }
-    }
-
-    // Load messages from GitHub Issues (optional enhancement)
+async function fetchMessages() {
     try {
-        const response = await fetch(`https://api.github.com/repos/tstparis/KudoLite/issues`);
+        const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`);
         const issues = await response.json();
 
         const list = document.getElementById('message-list');
@@ -38,6 +23,29 @@ window.onload = async () => {
     } catch (err) {
         console.error('Failed to load messages:', err);
     }
+}
+
+window.onload = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+        try {
+            const res = await fetch(`${backendBaseUrl}/callback?code=${code}`);
+            const data = await res.json();
+            const token = data.access_token;
+
+            localStorage.setItem('github_token', token);
+            document.getElementById('message-form').style.display = 'block';
+        } catch (err) {
+            alert('Login failed');
+        }
+    }
+
+    await fetchMessages(); // Initial load
+
+    // Periodically refresh messages every 10 seconds
+    setInterval(fetchMessages, 10000);
 };
 
 document.getElementById('submit-btn').addEventListener('click', async () => {
@@ -57,6 +65,7 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
         if (data.success) {
             alert('Message posted!');
             document.getElementById('message-input').value = '';
+            await fetchMessages(); // Refresh messages after posting
         } else {
             alert('Failed to post message');
         }
