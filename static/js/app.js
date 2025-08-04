@@ -57,7 +57,8 @@ window.onload = async () => {
     }
 
     loadMessages();
-    setInterval(loadMessages, 10000); // Poll every 10 seconds
+    //setInterval(loadMessages, 10000); // Poll every 10 seconds
+    setInterval(loadMessages, 2000); // Poll every 2 seconds
 };
 
 // Login button
